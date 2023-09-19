@@ -37,7 +37,7 @@ criterion = nn.MSELoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01)
 
 # Training loop
-epochs = 10
+epochs = 200
 
 start_time = time.time()
 
