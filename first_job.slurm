@@ -12,7 +12,7 @@
 # load modules (assuming you start from the default environment)
 # we explicitly call the modules to improve reproducibility
 # in case the default settings change
-module load Python/3.9.5-GCCcore-10.3.0
+module load Python
 
 # Source the Python virtual environment
 source $HOME/torch/bin/activate
