@@ -1,7 +1,9 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import time
+from torch.utils.data import DataLoader, TensorDataset
+import pytorch_lightning as pl
 
 # Define a simple neural network model
 class SimpleModel(nn.Module):
@@ -12,47 +14,47 @@ class SimpleModel(nn.Module):
     def forward(self, x):
         return self.fc(x)
 
-# Create a synthetic dataset and dataloaders
+# Create a PyTorch Lightning module for training
+class SimpleLightningModule(pl.LightningModule):
+    def __init__(self, batch_size, lr):
+        super(SimpleLightningModule, self).__init__()
+        self.model = SimpleModel()
+        self.batch_size = batch_size
+        self.lr = lr
+
+    def forward(self, x):
+        return self.model(x)
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        outputs = self(x)
+        loss = nn.MSELoss()(outputs, y)
+        
+        # Log the loss for printing
+        self.log('train_loss', loss)
+        
+        return loss
+
+    def configure_optimizers(self):
+        return optim.SGD(self.parameters(), lr=self.lr)
+
+# Create a synthetic dataset
 input_size = 1000
 batch_size = 64
 data_size = 10000
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+x = torch.randn(data_size, input_size)
+y = torch.randn(data_size, input_size)
 
-x = torch.randn(data_size, input_size).to(device)
-y = torch.randn(data_size, input_size).to(device)
+train_data = TensorDataset(x, y)
+train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 
-train_data = torch.utils.data.TensorDataset(x, y)
-train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
+# Initialize the LightningModule
+lr = 0.01
+lightning_module = SimpleLightningModule(batch_size=batch_size, lr=lr)
 
-# Define the model, loss function, and optimizer
-model = SimpleModel().to(device)
+# Initialize the Trainer for multi-GPU training
+trainer = pl.Trainer(gpus=torch.cuda.device_count() if torch.cuda.is_available() else 0)
 
-# Use DataParallel to utilize multiple GPUs
-if torch.cuda.device_count() > 1:
-    print("Training on {} GPUs...".format(torch.cuda.device_count()))
-    model = nn.DataParallel(model)
-
-criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01)
-
-# Training loop
-epochs = 200
-
-start_time = time.time()
-
-for epoch in range(epochs):
-    running_loss = 0.0
-    for i, data in enumerate(train_loader, 0):
-        inputs, labels = data
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item()
-
-    print(f"Epoch {epoch+1}, Loss: {running_loss / (i+1)}")
-
-end_time = time.time()
-print("Training finished in {:.2f} seconds.".format(end_time - start_time))
+# Start training
+trainer.fit(lightning_module, train_loader)
