@@ -40,14 +40,15 @@ if __name__ == "__main__":
     print("Running {0} simulations of size {1}".format(n_runs, size))
 
     # Important: only way to get correct core count
-    # Altenatively use SLURM_CPUS_PER_TASK
+    # Alternatively use SLURM_CPUS_PER_TASK
     n_cores = os.environ['SLURM_JOB_CPUS_PER_NODE']
     print("The number of cores available from SLURM: {}".format(n_cores))
 
-    # go through the simulations in parallel
+    # Create a pool of workers
     pool = mp.Pool(processes=int(n_cores))
-    # use starmap because mysim has multiple inputs
-    res = pool.starmap(mysim, [(i,size) for i in range(n_runs)])
+
+    # Use map to parallelize the simulations
+    res = pool.map(mysim, range(n_runs))
     pool.close()
     pool.join()
 
