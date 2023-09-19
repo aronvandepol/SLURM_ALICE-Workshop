@@ -18,7 +18,7 @@
 module load Python
 
 # Source the Python virtual environment
-source $HOME/torch/bin/activate
+source $HOME/data1/PL/bin/activate
 
 echo "[$SHELL] #### Starting Python test"
 echo "[$SHELL] ## This is $SLURM_JOB_USER on $HOSTNAME and this job has the ID $SLURM_JOB_ID"
