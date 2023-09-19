@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import time
-import os
 
 # Define a simple neural network model
 class SimpleModel(nn.Module):
@@ -30,8 +29,7 @@ train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sh
 model = SimpleModel().to(device)
 
 # Use DataParallel to utilize multiple GPUs
-n_gpus = os.environ['SLURM_GPUS_PER_TASK']
-if n_gpus > 1:
+if torch.cuda.device_count() > 1:
     print("Training on {} GPUs...".format(torch.cuda.device_count()))
     model = nn.DataParallel(model)
 
