@@ -54,7 +54,7 @@ lr = 0.01
 lightning_module = SimpleLightningModule(batch_size=batch_size, lr=lr)
 
 # Initialize the Trainer for multi-GPU training
-trainer = pl.Trainer(devices=torch.cuda.device_count() if torch.cuda.is_available() else 0)
+trainer = pl.Trainer(devices=torch.cuda.device_count() if torch.cuda.is_available() else 0, log_every_n_steps=5, max_epochs=100)
 
 # Start training
 trainer.fit(lightning_module, train_loader)
