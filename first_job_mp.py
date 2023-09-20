@@ -20,7 +20,7 @@ def mysim(run, size=1000000):
     # get median
     arr_median = np.median(rnd_array)
 
-    # just for demonstration
+    # printing just for demonstration
     # do not do this here in a production run
     print("(PID {0}) Run {1}: Median of simulation: {2} ".format(pid, run, arr_median))
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=test_python_mp
+#SBATCH --job-name=first_job_mp
 #SBATCH --output=%x_%j.out
 #SBATCH --mail-user="a.m.van.de.pol@hum.leidenuniv.nl"
 #SBATCH --mail-type="ALL"

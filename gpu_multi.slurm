@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=gpu-test
+#SBATCH --job-name=gpu-multi
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 #SBATCH --mail-user=a.m.van.de.pol@hum.leidenuniv.nl
